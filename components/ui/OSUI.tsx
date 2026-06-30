@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useSegments } from 'expo-router';
 import type { ReactNode } from 'react';
 import {
   Pressable,
@@ -14,21 +14,27 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle } from 'react-native-svg';
 
 import { useTheme } from '@/contexts/ThemeContext';
+import { useTabBarHeight } from '@/lib/tab-bar-insets';
 import type { ThemeColors } from '@/lib/theme';
 
 export function ScreenScroll({
   children,
-  bottomPad = 100,
+  bottomPad = 24,
 }: {
   children: ReactNode;
   bottomPad?: number;
 }) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  const segments = useSegments();
+  const tabBarHeight = useTabBarHeight();
+  const inTabs = segments[0] === '(tabs)';
+  const scrollBottom = bottomPad + (inTabs ? tabBarHeight : insets.bottom);
+
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: colors.background }}
-      contentContainerStyle={{ paddingBottom: insets.bottom + bottomPad }}>
+      contentContainerStyle={{ paddingBottom: scrollBottom }}>
       {children}
     </ScrollView>
   );

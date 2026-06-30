@@ -20,6 +20,7 @@ import {
   isReflectionTime,
   QUICK_ADD_ACTIONS,
 } from '@/lib/personal-os';
+import { useTabBarHeight } from '@/lib/tab-bar-insets';
 import {
   formatVerseSubtitle,
   isScriptureSaved,
@@ -48,6 +49,8 @@ export default function HomeScreen() {
   const faith = lifeProfile.faith;
   const today = toDateString();
   const verseSaved = isScriptureSaved(faith, verse.reference, today);
+
+  const tabBarHeight = useTabBarHeight();
 
   const toggleSaveVerse = () => {
     if (verseSaved) return;
@@ -255,7 +258,7 @@ export default function HomeScreen() {
 
       <Pressable
         onPress={() => router.push('/add-task')}
-        style={[styles.fab, { backgroundColor: colors.fab }]}>
+        style={[styles.fab, { backgroundColor: colors.fab, bottom: tabBarHeight + 16 }]}>
         <Ionicons name="add" size={28} color="#fff" />
       </Pressable>
     </View>
@@ -335,7 +338,6 @@ const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
     right: 20,
-    bottom: 100,
     width: 56,
     height: 56,
     borderRadius: 28,

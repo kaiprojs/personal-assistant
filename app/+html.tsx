@@ -41,15 +41,33 @@ export default function Root({ children }: { children: ReactNode }) {
 }
 
 const responsiveBackground = `
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  height: -webkit-fill-available;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
 body {
   background-color: #fff;
+  display: flex;
+  flex-direction: column;
 }
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #000;
   }
 }
-html, body, #root {
-  height: 100%;
-  height: -webkit-fill-available;
+#root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }`;
