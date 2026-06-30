@@ -4,6 +4,9 @@ import { Tabs } from 'expo-router';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useTabBarBottomInset } from '@/lib/tab-bar-insets';
 
+const TAB_BAR_CONTENT_HEIGHT = 49;
+const TAB_BAR_PADDING_TOP = 8;
+
 export default function TabLayout() {
   const { colors } = useTheme();
   const bottomInset = useTabBarBottomInset();
@@ -13,10 +16,12 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.textMuted,
-        safeAreaInsets: { bottom: bottomInset },
         tabBarStyle: {
           backgroundColor: colors.tabBar,
           borderTopColor: colors.border,
+          paddingTop: TAB_BAR_PADDING_TOP,
+          paddingBottom: bottomInset,
+          height: TAB_BAR_CONTENT_HEIGHT + TAB_BAR_PADDING_TOP + bottomInset,
         },
         tabBarLabelStyle: { fontSize: 11, fontWeight: '500' },
         headerShown: false,
