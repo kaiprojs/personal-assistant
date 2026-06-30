@@ -15,7 +15,9 @@ export default function Root({ children }: { children: ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
         {/*
           GitHub Pages cannot set COOP/COEP headers. coi-serviceworker enables
@@ -46,4 +48,8 @@ body {
   body {
     background-color: #000;
   }
+}
+html, body, #root {
+  min-height: 100%;
+  min-height: -webkit-fill-available;
 }`;
