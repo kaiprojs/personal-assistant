@@ -1,20 +1,45 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
+import { Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/contexts/ThemeContext';
 
+const TAB_BAR_CONTENT_HEIGHT = 49;
+const TAB_BAR_PADDING_TOP = 8;
+
+function useTabBarBottomPad() {
+  const insets = useSafeAreaInsets();
+
+  let webFallback = 0;
+  if (Platform.OS === 'web' && typeof window !== 'undefined') {
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+    if (isStandalone) {
+      webFallback = 34;
+    }
+  }
+
+  return Math.max(insets.bottom, webFallback);
+}
+
 export default function TabLayout() {
   const { colors } = useTheme();
+  const bottomPad = useTabBarBottomPad();
 
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.textMuted,
+        safeAreaInsets: { bottom: 0 },
         tabBarStyle: {
           backgroundColor: colors.tabBar,
           borderTopColor: colors.border,
-          paddingTop: 8,
+          paddingTop: TAB_BAR_PADDING_TOP,
+          paddingBottom: bottomPad,
+          height: TAB_BAR_CONTENT_HEIGHT + TAB_BAR_PADDING_TOP + bottomPad,
         },
         tabBarLabelStyle: { fontSize: 11, fontWeight: '500' },
         headerShown: false,
