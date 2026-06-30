@@ -115,6 +115,7 @@ function ThemedNavigation() {
         <Stack.Screen name="life-compass" options={{ headerShown: false }} />
         <Stack.Screen name="edit-identity" options={{ headerShown: false }} />
         <Stack.Screen name="mind-notes" options={{ headerShown: false }} />
+        <Stack.Screen name="saved-scripture" options={{ headerShown: false }} />
       </Stack>
     </>
   );

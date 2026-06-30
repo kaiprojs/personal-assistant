@@ -1,18 +1,19 @@
 import {
   CAREER,
   CORE_VALUES,
-  DAILY_VERSES,
   FAITH_ACTIVITIES,
   FINANCE,
   HEALTH_METRICS,
   LONG_TERM_GOALS,
-  MEMORY_VERSE,
   MIND_COURSES,
   MIND_READING,
   MIND_SKILLS,
   MISSION,
   VISION,
 } from '@/lib/personal-os';
+import { SCRIPTURE_VERSES } from '@/lib/scripture-verses';
+
+const MEMORY_VERSE = SCRIPTURE_VERSES[1] ?? SCRIPTURE_VERSES[0];
 
 export interface IdentityProfile {
   mission: string;
@@ -37,10 +38,22 @@ export interface FaithActivity {
   done: boolean;
 }
 
+export interface SavedScripture {
+  id: string;
+  scriptureId?: string;
+  reference: string;
+  text: string;
+  theme: string;
+  group: string;
+  savedDate: string;
+  savedAt: string;
+}
+
 export interface FaithProfile {
   reading: FaithReading;
   memoryVerseIndex: number;
   activities: FaithActivity[];
+  savedScripture: SavedScripture[];
 }
 
 export interface MindNote {
@@ -113,6 +126,7 @@ export const DEFAULT_PROFILES: LifeProfiles = {
       color: a.color,
       done: a.title === 'Church Attendance',
     })),
+    savedScripture: [],
   },
   mind: {
     currentBook: {
@@ -156,7 +170,7 @@ export const DEFAULT_PROFILES: LifeProfiles = {
 };
 
 export function getMemoryVerse(profile: FaithProfile) {
-  const verses = DAILY_VERSES;
+  const verses = SCRIPTURE_VERSES;
   const idx = profile.memoryVerseIndex % verses.length;
   return verses[idx] ?? MEMORY_VERSE;
 }

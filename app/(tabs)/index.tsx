@@ -14,13 +14,18 @@ import {
 import { WeekPlanBanner } from '@/components/WeekPlanBanner';
 import { useAppData } from '@/contexts/AppDataContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { formatDisplayDate, formatFullDate, toDateString } from '@/lib/dates';
 import {
   getDailyVerse,
   getGreeting,
   isReflectionTime,
   QUICK_ADD_ACTIONS,
 } from '@/lib/personal-os';
+import {
+  formatVerseSubtitle,
+  isScriptureSaved,
+  saveScripture,
+} from '@/lib/scripture';
+import { toDateString, formatDisplayDate, formatFullDate } from '@/lib/dates';
 
 export default function HomeScreen() {
   const { colors } = useTheme();
@@ -33,11 +38,21 @@ export default function HomeScreen() {
     habitDoneToday,
     hasReflectionToday,
     toggleHabitToday,
+    lifeProfile,
+    updateLifeProfile,
   } = useAppData();
 
   if (loading) return <LoadingView />;
 
   const verse = getDailyVerse();
+  const faith = lifeProfile.faith;
+  const today = toDateString();
+  const verseSaved = isScriptureSaved(faith, verse.reference, today);
+
+  const toggleSaveVerse = () => {
+    if (verseSaved) return;
+    updateLifeProfile('faith', saveScripture(faith, verse, today));
+  };
   const scheduled = [
     ...todayBuckets.overdue,
     ...todayBuckets.today,
@@ -65,14 +80,41 @@ export default function HomeScreen() {
 
         <Card style={styles.verseCard}>
           <View style={styles.verseHeader}>
-            <Ionicons name="heart" size={18} color={colors.green} />
-            <Text style={[styles.verseRef, { color: colors.green }]}>
-              {verse.reference}
-            </Text>
+            <View style={styles.verseHeaderLeft}>
+              <Ionicons name="heart" size={18} color={colors.green} />
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.verseRef, { color: colors.green }]}>
+                  {verse.reference}
+                </Text>
+                <Text style={[styles.verseTheme, { color: colors.textMuted }]}>
+                  {formatVerseSubtitle(verse)}
+                </Text>
+              </View>
+            </View>
+            <Pressable
+              onPress={toggleSaveVerse}
+              hitSlop={8}
+              style={[
+                styles.saveBtn,
+                {
+                  backgroundColor: verseSaved ? colors.greenMuted : colors.cardElevated,
+                },
+              ]}>
+              <Ionicons
+                name={verseSaved ? 'bookmark' : 'bookmark-outline'}
+                size={20}
+                color={verseSaved ? colors.green : colors.textMuted}
+              />
+            </Pressable>
           </View>
           <Text style={[styles.verseText, { color: colors.text }]}>
             {verse.text}
           </Text>
+          {verseSaved ? (
+            <Text style={[styles.savedHint, { color: colors.green }]}>
+              Saved to Scripture
+            </Text>
+          ) : null}
         </Card>
 
         <SectionLabel title="Today's Focus" />
@@ -225,9 +267,24 @@ const styles = StyleSheet.create({
   greeting: { fontSize: 28, fontWeight: '700' },
   date: { fontSize: 15, marginTop: 4 },
   verseCard: { gap: 8 },
-  verseHeader: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  verseHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  verseHeaderLeft: { flex: 1, flexDirection: 'row', alignItems: 'flex-start', gap: 6 },
   verseRef: { fontSize: 13, fontWeight: '700' },
+  verseTheme: { fontSize: 11, marginTop: 2 },
+  saveBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   verseText: { fontSize: 15, lineHeight: 22, fontStyle: 'italic' },
+  savedHint: { fontSize: 12, fontWeight: '600' },
   focusRow: { flexDirection: 'row', alignItems: 'center', gap: 16 },
   priorityTag: {
     alignSelf: 'flex-start',

@@ -103,8 +103,30 @@ export function Card({
   return content;
 }
 
-export function SectionLabel({ title }: { title: string }) {
+export function SectionLabel({
+  title,
+  action,
+  onAction,
+}: {
+  title: string;
+  action?: string;
+  onAction?: () => void;
+}) {
   const { colors } = useTheme();
+  if (action && onAction) {
+    return (
+      <View style={styles.sectionLabelRow}>
+        <Text style={[styles.sectionLabel, { color: colors.sectionHeader }]}>
+          {title.toUpperCase()}
+        </Text>
+        <Pressable onPress={onAction} hitSlop={8}>
+          <Text style={[styles.sectionAction, { color: colors.accent }]}>
+            {action}
+          </Text>
+        </Pressable>
+      </View>
+    );
+  }
   return (
     <Text style={[styles.sectionLabel, { color: colors.sectionHeader }]}>
       {title.toUpperCase()}
@@ -382,6 +404,15 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 8,
   },
+  sectionLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: 20,
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  sectionAction: { fontSize: 14, fontWeight: '600' },
   ringText: { position: 'absolute', fontWeight: '700' },
   progressTrack: { borderRadius: 999, overflow: 'hidden', marginTop: 8 },
   checkRow: {

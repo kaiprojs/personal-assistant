@@ -50,6 +50,6 @@ body {
   }
 }
 html, body, #root {
-  min-height: 100%;
-  min-height: -webkit-fill-available;
+  height: 100%;
+  height: -webkit-fill-available;
 }`;

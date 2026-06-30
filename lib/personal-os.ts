@@ -40,26 +40,6 @@ export const LIFE_BALANCE_AREAS = [
 
 export type BalanceAreaKey = (typeof LIFE_BALANCE_AREAS)[number]['key'];
 
-export const DAILY_VERSES = [
-  { reference: 'Proverbs 16:3', text: 'Commit to the Lord whatever you do, and he will establish your plans.' },
-  { reference: 'Philippians 4:13', text: 'I can do all things through Christ who strengthens me.' },
-  { reference: 'Proverbs 27:17', text: 'As iron sharpens iron, so one person sharpens another.' },
-  { reference: 'Colossians 3:23', text: 'Whatever you do, work at it with all your heart, as working for the Lord.' },
-  { reference: 'Joshua 1:9', text: 'Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go.' },
-  { reference: 'Micah 6:8', text: 'Act justly, love mercy, and walk humbly with your God.' },
-  { reference: 'Psalm 119:105', text: 'Your word is a lamp for my feet, a light on my path.' },
-  { reference: 'Matthew 5:16', text: 'Let your light shine before others, that they may see your good deeds and glorify your Father in heaven.' },
-  { reference: 'Romans 12:2', text: 'Do not conform to the pattern of this world, but be transformed by the renewing of your mind.' },
-  { reference: 'Isaiah 40:31', text: 'Those who hope in the Lord will renew their strength. They will soar on wings like eagles.' },
-  { reference: '1 Corinthians 10:31', text: 'Whatever you do, do it all for the glory of God.' },
-  { reference: 'Proverbs 3:5-6', text: 'Trust in the Lord with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight.' },
-];
-
-export const MEMORY_VERSE = {
-  reference: 'Philippians 4:13',
-  text: 'I can do all things through Christ who strengthens me.',
-};
-
 export const FAITH_CHECKLIST = [
   { key: 'devotion', label: 'Daily Devotion' },
   { key: 'bible', label: 'Bible Reading', subtitle: 'John 15' },
@@ -217,10 +197,7 @@ export function getDailyReminder(): string {
   return REMINDERS[day % REMINDERS.length];
 }
 
-export function getDailyVerse() {
-  const day = Math.floor(Date.now() / 86_400_000);
-  return DAILY_VERSES[day % DAILY_VERSES.length];
-}
+export { getDailyVerse, DAILY_VERSES, SCRIPTURE_VERSES } from '@/lib/scripture';
 
 export function isReflectionTime(): boolean {
   return new Date().getHours() >= 17;

@@ -23,7 +23,16 @@ import {
   getReadingProgress,
   type FaithProfile,
 } from '@/lib/life-profile';
-import { DAILY_VERSES, FAITH_CHECKLIST } from '@/lib/personal-os';
+import { FAITH_CHECKLIST } from '@/lib/personal-os';
+import { SCRIPTURE_VERSES } from '@/lib/scripture-verses';
+import {
+  formatVerseSubtitle,
+  getSavedScriptureForDate,
+  getThemeLabel,
+  isScriptureSaved,
+  saveScripture,
+} from '@/lib/scripture';
+import { toDateString } from '@/lib/dates';
 
 export default function FaithScreen() {
   const { colors } = useTheme();
@@ -35,6 +44,8 @@ export default function FaithScreen() {
   const [editReading, setEditReading] = useState(false);
   const memoryVerse = getMemoryVerse(faith);
   const readingProgress = getReadingProgress(faith);
+  const todaySaved = getSavedScriptureForDate(faith);
+  const savedCount = faith.savedScripture?.length ?? 0;
 
   const saveFaith = (next: FaithProfile) => updateLifeProfile('faith', next);
 
@@ -51,8 +62,13 @@ export default function FaithScreen() {
   const nextMemoryVerse = () => {
     saveFaith({
       ...faith,
-      memoryVerseIndex: (faith.memoryVerseIndex + 1) % DAILY_VERSES.length,
+      memoryVerseIndex: (faith.memoryVerseIndex + 1) % SCRIPTURE_VERSES.length,
     });
+  };
+
+  const saveMemoryVerse = () => {
+    if (isScriptureSaved(faith, memoryVerse.reference)) return;
+    saveFaith(saveScripture(faith, memoryVerse));
   };
 
   const toggleActivity = (id: string) => {
@@ -124,11 +140,52 @@ export default function FaithScreen() {
         <Pressable onPress={nextMemoryVerse}>
           <QuoteCard
             text={memoryVerse.text}
-            reference={`${memoryVerse.reference} · tap for next`}
+            reference={`${memoryVerse.reference} · ${formatVerseSubtitle(memoryVerse)} · tap for next`}
             icon="star"
             iconColor={colors.orange}
           />
         </Pressable>
+        <Pressable
+          onPress={saveMemoryVerse}
+          style={[styles.saveMemoryBtn, { backgroundColor: colors.greenMuted }]}>
+          <Ionicons
+            name={
+              isScriptureSaved(faith, memoryVerse.reference)
+                ? 'bookmark'
+                : 'bookmark-outline'
+            }
+            size={16}
+            color={colors.green}
+          />
+          <Text style={[styles.saveMemoryText, { color: colors.green }]}>
+            {isScriptureSaved(faith, memoryVerse.reference)
+              ? 'Saved to Scripture'
+              : 'Save this verse'}
+          </Text>
+        </Pressable>
+
+        <SectionLabel
+          title="Scripture"
+          action={savedCount > 0 ? 'See all' : undefined}
+          onAction={savedCount > 0 ? () => router.push('/saved-scripture') : undefined}
+        />
+        {todaySaved.length === 0 ? (
+          <Card>
+            <Text style={[styles.emptyScripture, { color: colors.textMuted }]}>
+              Save verses from Today or tap Save above when one resonates with you.
+            </Text>
+          </Card>
+        ) : (
+          todaySaved.map((item) => (
+            <QuoteCard
+              key={item.id}
+              text={item.text}
+              reference={`${item.reference} · ${getThemeLabel(item.theme)}`}
+              icon="bookmark"
+              iconColor={colors.green}
+            />
+          ))
+        )}
 
         <SectionLabel title="Activities" />
         <Card style={{ paddingVertical: 4 }}>
@@ -193,4 +250,17 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   actionText: { fontSize: 13, fontWeight: '600' },
+  saveMemoryBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    marginTop: -4,
+    marginBottom: 8,
+    marginHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  saveMemoryText: { fontSize: 13, fontWeight: '600' },
+  emptyScripture: { fontSize: 14, lineHeight: 20, textAlign: 'center' },
 });
