@@ -38,16 +38,18 @@ export default function ProjectsScreen() {
       </View>
 
       <SectionLabel title="Current Project" />
-      <Card onPress={() => router.push('/primary-focus')}>
-        <View style={styles.focusRow}>
-          <View style={{ flex: 1 }}>
-            <Text style={[styles.projectTitle, { color: colors.text }]}>
-              {primaryFocus?.title ?? 'Set primary project'}
-            </Text>
-            <ProgressBar progress={primaryFocus?.progress ?? 0} />
+      <Card>
+        <Pressable onPress={() => router.push('/primary-focus')}>
+          <View style={styles.focusRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.projectTitle, { color: colors.text }]}>
+                {primaryFocus?.title ?? 'Set primary project'}
+              </Text>
+              <ProgressBar progress={primaryFocus?.progress ?? 0} />
+            </View>
+            <ProgressRing progress={primaryFocus?.progress ?? 0} size={48} />
           </View>
-          <ProgressRing progress={primaryFocus?.progress ?? 0} size={48} />
-        </View>
+        </Pressable>
         <Pressable
           onPress={() =>
             setPrimaryFocusProgress(Math.min(100, (primaryFocus?.progress ?? 0) + 5))

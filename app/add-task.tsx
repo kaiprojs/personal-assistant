@@ -103,13 +103,18 @@ export default function AddTaskScreen() {
     }
 
     setSaving(true);
-    if (isEdit && id) {
-      await updateTask(id, buildInput());
-    } else {
-      await createTask(buildInput());
+    try {
+      if (isEdit && id) {
+        await updateTask(id, buildInput());
+      } else {
+        await createTask(buildInput());
+      }
+      router.back();
+    } catch {
+      Alert.alert('Could not save', 'Something went wrong saving this task. Try again.');
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    router.back();
   };
 
   const handleDelete = () => {

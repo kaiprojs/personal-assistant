@@ -27,37 +27,45 @@ export async function scheduleTaskReminder(
   dueDate: string,
   dueTime: string | null,
 ): Promise<string | null> {
-  const granted = await requestNotificationPermissions();
-  if (!granted) return null;
+  if (Platform.OS === 'web') return null;
 
-  const [hours, minutes] = dueTime
-    ? dueTime.split(':').map(Number)
-    : [9, 0];
-  const triggerDate = parseDateString(dueDate);
-  triggerDate.setHours(hours, minutes, 0, 0);
+  try {
+    const granted = await requestNotificationPermissions();
+    if (!granted) return null;
 
-  if (triggerDate.getTime() <= Date.now()) return null;
+    const [hours, minutes] = dueTime
+      ? dueTime.split(':').map(Number)
+      : [9, 0];
+    const triggerDate = parseDateString(dueDate);
+    triggerDate.setHours(hours, minutes, 0, 0);
 
-  const id = await Notifications.scheduleNotificationAsync({
-    content: {
-      title: 'Task reminder',
-      body: title,
-      data: { taskId },
-    },
-    trigger: {
-      type: Notifications.SchedulableTriggerInputTypes.DATE,
-      date: triggerDate,
-    },
-  });
+    if (triggerDate.getTime() <= Date.now()) return null;
 
-  return id;
+    return await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Task reminder',
+        body: title,
+        data: { taskId },
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DATE,
+        date: triggerDate,
+      },
+    });
+  } catch {
+    return null;
+  }
 }
 
 export async function cancelNotification(
   notificationId: string | null,
 ): Promise<void> {
-  if (!notificationId) return;
-  await Notifications.cancelScheduledNotificationAsync(notificationId);
+  if (!notificationId || Platform.OS === 'web') return;
+  try {
+    await Notifications.cancelScheduledNotificationAsync(notificationId);
+  } catch {
+    // ignore — notification may not exist on this platform
+  }
 }
 
 export async function setupAndroidChannel(): Promise<void> {

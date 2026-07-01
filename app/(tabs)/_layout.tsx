@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { useTabBarBottomInset } from '@/lib/tab-bar-insets';
@@ -19,15 +19,6 @@ export default function TabLayout() {
           backgroundColor: colors.tabBar,
           borderTopColor: colors.border,
           borderTopWidth: StyleSheet.hairlineWidth,
-          ...(Platform.OS === 'web'
-            ? {
-                position: 'fixed' as const,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                zIndex: 100,
-              }
-            : null),
         },
         tabBarLabelStyle: {
           fontSize: 10,

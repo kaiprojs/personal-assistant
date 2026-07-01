@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
+  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -65,9 +66,14 @@ export default function DecisionFilterScreen() {
       recurrence_rule: params.recurrence_rule || null,
     };
 
-    await createTask(input);
-    setSaving(false);
-    router.replace('/(tabs)');
+    try {
+      await createTask(input);
+      router.replace('/(tabs)');
+    } catch {
+      Alert.alert('Could not save', 'Something went wrong creating this task.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const setAnswer = (index: number, value: Answer) => {

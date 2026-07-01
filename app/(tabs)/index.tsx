@@ -258,7 +258,14 @@ export default function HomeScreen() {
 
       <Pressable
         onPress={() => router.push('/add-task')}
-        style={[styles.fab, { backgroundColor: colors.fab, bottom: tabBarHeight + 16 }]}>
+        style={[
+          styles.fab,
+          {
+            backgroundColor: colors.fab,
+            bottom: tabBarHeight + 16,
+            zIndex: 10,
+          },
+        ]}>
         <Ionicons name="add" size={28} color="#fff" />
       </Pressable>
     </View>

@@ -3,6 +3,7 @@ import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import {
   ActivityIndicator,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -12,6 +13,7 @@ import { Swipeable } from 'react-native-gesture-handler';
 
 import { useAppData } from '@/contexts/AppDataContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useTabBarHeight } from '@/lib/tab-bar-insets';
 import { formatDisplayDate } from '@/lib/dates';
 import type { Task } from '@/lib/types';
 
@@ -35,7 +37,13 @@ export function TaskRow({
   const isDone = task.status === 'completed';
 
   const handleToggle = async () => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (Platform.OS !== 'web') {
+      try {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } catch {
+        // haptics unavailable
+      }
+    }
     if (isDone) return;
     await completeTask(task.id);
   };
@@ -104,7 +112,7 @@ export function TaskRow({
     </Pressable>
   );
 
-  if (!enableSwipe || isDone) return content;
+  if (!enableSwipe || isDone || Platform.OS === 'web') return content;
 
   return (
     <Swipeable
@@ -176,10 +184,18 @@ export function LoadingView() {
 export function FAB({ onPress }: { onPress?: () => void }) {
   const { colors } = useTheme();
   const router = useRouter();
+  const tabBarHeight = useTabBarHeight();
 
   return (
     <Pressable
-      style={[styles.fab, { backgroundColor: colors.fab }]}
+      style={[
+        styles.fab,
+        {
+          backgroundColor: colors.fab,
+          bottom: tabBarHeight + 16,
+          zIndex: 10,
+        },
+      ]}
       onPress={onPress ?? (() => router.push('/add-task'))}>
       <Ionicons name="add" size={28} color="#fff" />
     </Pressable>
@@ -238,7 +254,6 @@ const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
     right: 20,
-    bottom: 24,
     width: 56,
     height: 56,
     borderRadius: 28,

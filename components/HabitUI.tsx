@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Platform, StyleSheet, Text, View } from 'react-native';
 
 import { useAppData } from '@/contexts/AppDataContext';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -13,7 +13,13 @@ export function HabitRow({ habit }: { habit: Habit }) {
   const weekCount = habitWeekCounts[habit.id] ?? 0;
 
   const handleToggle = async () => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== 'web') {
+      try {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      } catch {
+        // haptics unavailable
+      }
+    }
     await toggleHabitToday(habit.id);
   };
 

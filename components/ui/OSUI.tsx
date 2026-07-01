@@ -68,8 +68,12 @@ export function ScreenHeader({
         {icon && <Ionicons name={icon} size={18} color={colors.textMuted} />}
         <Text style={[styles.headerTitle, { color: colors.text }]}>{title}</Text>
       </View>
-      <Pressable onPress={onMenu} hitSlop={12} style={styles.headerBtn}>
-        <Ionicons name="ellipsis-horizontal" size={22} color={colors.textMuted} />
+      <Pressable onPress={onMenu} hitSlop={12} style={styles.headerBtn} disabled={!onMenu}>
+        {onMenu ? (
+          <Ionicons name="ellipsis-horizontal" size={22} color={colors.textMuted} />
+        ) : (
+          <View style={{ width: 22 }} />
+        )}
       </Pressable>
     </View>
   );
@@ -100,13 +104,19 @@ export function Card({
   onPress?: () => void;
 }) {
   const { colors } = useTheme();
-  const content = (
-    <View style={[styles.card, { backgroundColor: colors.card }, style]}>
-      {children}
-    </View>
-  );
-  if (onPress) return <Pressable onPress={onPress}>{content}</Pressable>;
-  return content;
+  const cardStyle = [styles.card, { backgroundColor: colors.card }, style];
+
+  if (onPress) {
+    return (
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => [cardStyle, pressed && { opacity: 0.92 }]}>
+        {children}
+      </Pressable>
+    );
+  }
+
+  return <View style={cardStyle}>{children}</View>;
 }
 
 export function SectionLabel({
